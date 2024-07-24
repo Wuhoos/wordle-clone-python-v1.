@@ -1,10 +1,14 @@
 from wordle import Wordle
 from colorama import Fore
 from letterState import LetterState
+import random
 
 def main():
-    print ("Hello Wordle")
-    wordle = Wordle('Apple')
+
+    wordSet = loadWordSet('data/wordsSource.txt')
+    secret = random.choice(list(wordSet))
+
+    wordle = Wordle(secret)
 
     while wordle.canAttempt:
         x = input("\n Type yout guess: ")
@@ -19,7 +23,7 @@ def main():
     if wordle.isSolved:
         print('Puzzle solved')
     else:
-        print('not solved')
+        print(f'Could not solved: {wordle.secret}')
 
     print (wordle)
 
@@ -39,6 +43,14 @@ def displayResults(wordle: Wordle):
 
     drawBorder(lines)
 
+def loadWordSet(path: str):
+    wordSet = set()
+    with open(path, 'r') as f:
+        for line in f.readlines():
+            word = line.strip().upper()
+            wordSet.add(word)
+    return wordSet
+
 def convertResultToColor(result: list[LetterState]):
     resultWithColor = []
     for letter in result:
@@ -51,6 +63,7 @@ def convertResultToColor(result: list[LetterState]):
         coloredLetter = color + letter.character + Fore.RESET
         resultWithColor.append(coloredLetter)
     return " ".join(resultWithColor)
+    
 
 def drawBorder(lines:list[str], size: int = 9, pad: int = 1):
 
